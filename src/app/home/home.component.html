@@ -1,0 +1,139 @@
+<!-- https://www.google.com/a/cpanel/estudante.ifms.edu.br/images/logo.gif?service=google_gsuite -->
+<nav class="navbar navbar-light bg-light">
+  <span class="navbar-brand mb-0 h1 text-success" style="margin: 2px;">
+    <img style="width: 120px;" src="https://www.google.com/a/cpanel/estudante.ifms.edu.br/images/logo.gif?service=google_gsuite" alt="logo">
+    SISTEMA DE OCORRÊNCIAS SIMPLIFICADO
+  </span>
+
+  <div class="nav-item" style="float: right; margin-right: 0px;">
+    <form #consultar="ngForm" (ngSubmit)="consultarOcorrencia(consultar)" class="form-inline my-2 my-lg-0">
+      <input [(ngModel)]="consultar.cod" id="cod" name="cod" class="form-control mr-sm-2" type="text" placeholder="Código da ocorrência">
+      <div (click)="openModal(consulta)"><button class="btn btn-outline-success my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button></div>
+    </form>
+  </div>
+
+  <div class="nav-item" style="float: right;">
+    <button type="button" class="btn btn-outline-success" (click)="openModal(loginAdmin)">LOGIN</button>
+  </div>
+</nav>
+	
+<div class="w-100 container-fluid bg-light" id="f">
+	<form #form="ngForm" (ngSubmit)="registrarOcorrencia(form)">
+    <h3 class="outstanding-title"><strong>Nova ocorrência</strong></h3>
+    <div class="form-row">
+      <div class="form-group col-md-4">
+        <label for="data">Data</label>
+        <div class="form-inline">
+          <input class="form-control" style="width: 70%" placeholder="yyyy-mm-dd" name="data" [(ngModel)]="form.data" ngbDatepicker #d="ngbDatepicker">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary" style="position: relative" (click)="d.toggle()" type="button"><i class="fas fa-calendar"></i></button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="informante">Informante</label>
+        <br>
+        <div class="form-group col-md 6" style="margin-bottom: 0px;">
+          <input class="form-check-input" type="checkbox" id="inlineFormCheck" (click)="mudarFlag()">
+          <label class="form-check-label" for="inlineFormCheck">
+            Se identificar
+          </label>
+        </div>
+        <input disabled *ngIf="!flagInformante" [(ngModel)]="form.informante" type="text" class="form-control" id="informante" name="informante" placeholder="Informante">
+        <input required *ngIf="flagInformante" [(ngModel)]="form.informante" type="text" class="form-control" id="informante" name="informante" placeholder="Informante">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-4">
+        <label for="tipo">Tipo</label>
+        <select required [(ngModel)]="form.tipo" name="tipo" id="tipo" class="form-control">
+          <option *ngFor="let t of tipos" value="{{t}}">{{t}}</option>
+        </select>
+      </div>
+      <div class="form-group col-md-4">
+        <label for="infrator">Setor</label>
+        <select required [(ngModel)]="form.setor" name="setor" id="setor" class="form-control">
+          <option *ngFor="let s of setores" value="{{s}}">{{s}}</option>
+        </select>
+      </div>
+      <div class="form-group col-md-4">
+        <label for="infrator">Infrator</label>
+        <input required [(ngModel)]="form.infrator" type="text" class="form-control" id="infrator" name="infrator" placeholder="Infrator">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-12">
+        <label for="descricao">Descrição</label>
+        <textarea required class="form-control" [(ngModel)]="form.descricao" name="descricao" id="descricao" rows="3"></textarea>
+      </div>
+    </div>
+    <div class="form-row col-md-12">
+      <div (click)="openModal(confirm)"><button type="submit" class="btn btn-success" id="enviar">Enviar</button></div>
+    </div>	
+  </form>	
+</div>
+
+<ng-template #confirm let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">ENVIADO COM SUCESSO!</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <h5>
+      A ocorrência foi enviada com sucesso. 
+      Quando quiser consulta-la, use o código de identificação: <strong class="text-success">{{chave}}</strong>
+    </h5>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-success" (click)="modal.dismiss('Cross click')">Ok</button>
+  </div>
+</ng-template>
+
+<ng-template #consulta let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">CONSULTA</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <h5>
+      O status atual dessa ocorrência é {{status}}.
+      Quaisquer dúvidas, entre em contato com o responsável pelo setor.
+    </h5>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-success" (click)="modal.dismiss('Cross click'); recarregar()">Ok</button>
+  </div>
+</ng-template>
+
+<ng-template #loginAdmin let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">LOGIN</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form #loginForm="ngForm" (ngSubmit)="login(loginForm)">
+      <ngb-alert *ngIf="flagSenha" [dismissible]="false" type="danger">
+        Senha inválida!
+      </ngb-alert>
+      <div class="form-group">
+        <label for="setor">Setor</label>
+        <select required [(ngModel)]="loginForm.setor" name="setor" id="setor" class="form-control">
+          <option *ngFor="let s of setores" value="{{s}}">{{s}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="senha">Senha</label>
+        <input required [(ngModel)]="loginForm.senha" type="password" id="senha" name="senha" placeholder="Senha" class="form-control">
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn btn-success">LOGIN</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

@@ -1,0 +1,58 @@
+<!-- https://www.google.com/a/cpanel/estudante.ifms.edu.br/images/logo.gif?service=google_gsuite -->
+<nav class="navbar navbar-light bg-light">
+  <span class="navbar-brand mb-0 h1 text-success" style="margin: 2px;">
+    <img style="width: 120px;" src="https://www.google.com/a/cpanel/estudante.ifms.edu.br/images/logo.gif?service=google_gsuite" alt="logo">
+    SISTEMA DE OCORRÊNCIAS SIMPLIFICADO
+  </span>
+
+  <div class="nav-item" style="float: right;">
+    <button type="button" class="btn btn-outline-success" (click)="logoff()">LOGOFF</button>
+  </div>
+</nav>
+	
+<div class="w-100 container-fluid bg-light" id="f">
+	<h3 class="outstanding-title"><strong>Ocorrências registradas</strong></h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Data</th>
+        <th scope="col">Código</th>
+        <th scope="col">Relator</th>
+        <th scope="col">Infrator</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr (click)="openModal(maisInfo); info(o)" *ngFor="let o of ocorrencias">
+        <th>{{o.data}}</th>
+        <td>{{o.hash}}</td>
+        <td>{{o.informante}}</td>
+        <td>{{o.infrator}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<ng-template #maisInfo let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">OCORRÊNCIA {{ocorrencia.hash}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <h6>Tipo: {{ocorrencia.tipo}}</h6>
+    <h6>Data: {{ocorrencia.data}}</h6>
+    <h6>Infrator: {{ocorrencia.infrator}}</h6>
+    <h6>Descrição: {{ocorrencia.descricao}}</h6>
+    <h6>Status atual: {{ocorrencia.status}}</h6>
+  </div>
+  <div class="modal-footer">
+    <form #novoStatus="ngForm" (ngSubmit)="mudarStatus(novoStatus)">
+      <label for="status"></label>
+      <select [(ngModel)]="novoStatus.status" name="status" id="status" class="form-control">
+        <option *ngFor="let s of status" value="{{s}}">{{s}}</option>
+      </select>
+      <button class="btn btn-success" type="submit">Mudar status</button>
+    </form>
+  </div>
+</ng-template>
