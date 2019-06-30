@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  url: "https://backendsos.herokuapp.com/api/",
+  url: "https://localhost:8085/api/",
   setor: ""
 };
 
